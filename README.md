@@ -1,4 +1,4 @@
-# DuplicatorBot
+# DuplicatorBot — [@Duplicayoredz_bot](https://t.me/Duplicayoredz_bot)
 
 A Telegram bot that duplicates an image into a predefined pattern (**2, 4, 6 or 8** copies)
 with **rotation**, **resize** and **Landscape / Portrait** controls.
@@ -25,6 +25,7 @@ Additional behaviour:
 
 ```
 main.py                     entry point
+start_bot.py                launcher that works from any directory
 selftest.py                 offline image-engine smoke test (no token needed)
 requirements.txt
 .env.example
@@ -54,10 +55,17 @@ duplicatorbot/
 
    Then edit `.env` and set `TELEGRAM_BOT_TOKEN`.
 
-4. Run the bot:
+4. Run the bot from the project folder:
 
    ```
+   cd d:/DuplicatorBot
    python main.py
+   ```
+
+   Or, from any other directory, use the launcher:
+
+   ```
+   python d:/DuplicatorBot/start_bot.py
    ```
 
 ## Usage
@@ -87,6 +95,36 @@ All settings live in `.env`:
 | `ALLOWED_USER_IDS` | *(empty)* | Comma separated numeric ids; empty allows everyone |
 | `MAX_OUTPUT_EDGE` | `3000` | Safety cap in pixels for the long edge |
 | `CANVAS_BACKGROUND` | `FFFFFF` | Background hex colour, no `#` |
+
+## Troubleshooting
+
+**`ModuleNotFoundError: No module named 'duplicatorbot'`**
+
+Python could not see the package because the command was run from a different
+working directory. Either run it from the project folder, or use the launcher
+which resolves the path itself:
+
+```
+cd d:/DuplicatorBot && python main.py
+python d:/DuplicatorBot/start_bot.py
+```
+
+**`TELEGRAM_BOT_TOKEN is missing`**
+
+The `.env` file was not created yet, or it lives in a different folder. Create it
+next to `main.py`:
+
+```
+copy d:\DuplicatorBot\.env.example d:\DuplicatorBot\.env
+```
+
+Then paste the token from [@BotFather](https://t.me/BotFather) after
+`TELEGRAM_BOT_TOKEN=`.
+
+**`Conflict: terminated by other getUpdates request`**
+
+Another copy of the bot is already polling with the same token. Stop the other
+process before starting a new one.
 
 ## Verifying the image engine
 

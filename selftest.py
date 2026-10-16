@@ -7,15 +7,27 @@ Run with::
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
-from PIL import Image
+# Allow running this script from any working directory.
+_PROJECT_ROOT = Path(__file__).resolve().parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
-from duplicatorbot.imaging import ORIENTATIONS, RESIZE_PRESETS, ROTATIONS, RenderOptions, build_pattern
-from duplicatorbot.keyboards import OPTION_CALLBACK, parse_callback, option_callback
-from duplicatorbot.layouts import SUPPORTED_COUNTS, get_layout
+from PIL import Image  # noqa: E402
 
-OUTPUT_DIR = Path("selftest_output")
+from duplicatorbot.imaging import (  # noqa: E402
+    ORIENTATIONS,
+    RESIZE_PRESETS,
+    ROTATIONS,
+    RenderOptions,
+    build_pattern,
+)
+from duplicatorbot.keyboards import OPTION_CALLBACK, option_callback, parse_callback  # noqa: E402
+from duplicatorbot.layouts import SUPPORTED_COUNTS, get_layout  # noqa: E402
+
+OUTPUT_DIR = _PROJECT_ROOT / "selftest_output"
 
 
 def make_sample(width: int = 640, height: int = 400) -> Image.Image:
