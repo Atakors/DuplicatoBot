@@ -1,3 +1,6 @@
+# Compatible with Python 3.9 - 3.12 (3.12.7 recommended, see README).
+# Pillow 10.4.0 has no cp314 wheels and PTB 21.6 expects the pre-3.14
+# asyncio.get_event_loop() behaviour.
 python-telegram-bot==21.6
 Pillow==10.4.0
 python-dotenv==1.0.1

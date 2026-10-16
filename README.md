@@ -41,6 +41,8 @@ duplicatorbot/
 ## Setup
 
 1. Create a bot with [@BotFather](https://t.me/BotFather) and copy the token.
+   Requires **Python 3.9 – 3.12** (3.12.7 recommended; see
+   [Python version](#python-version)).
 2. Install dependencies:
 
    ```
@@ -125,6 +127,26 @@ Then paste the token from [@BotFather](https://t.me/BotFather) after
 
 Another copy of the bot is already polling with the same token. Stop the other
 process before starting a new one.
+
+## Deploying to Render
+
+The repository ships a [`render.yaml`](render.yaml:1) Blueprint that runs the bot as a
+**background worker** (long polling needs no public port or webhook).
+
+1. Push this repository to GitHub.
+2. In Render choose **New → Blueprint**, point it at the repository and apply.
+3. When prompted, set `TELEGRAM_BOT_TOKEN` — it is declared with `sync: false`, so the
+   value is entered in the dashboard and never committed to git.
+
+### Python version
+
+The Blueprint pins `PYTHON_VERSION=3.12.7`. This matters: `Pillow==10.4.0` publishes no
+cp314 wheels, and python-telegram-bot 21.6 relies on `asyncio.get_event_loop()`, whose
+auto-creating behaviour was removed in Python 3.14. `3.12.7` avoids both problems.
+
+If you must run on 3.13/3.14, [`_install_event_loop()`](duplicatorbot/bot.py:436) already
+installs an event loop explicitly, so the polling error is handled. On 3.14 you would also
+need `Pillow>=11.3` (or a working compiler) so the native extension can build.
 
 ## Verifying the image engine
 

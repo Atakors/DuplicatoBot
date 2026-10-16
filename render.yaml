@@ -1,0 +1,24 @@
+# Render Blueprint for DuplicatorBot.
+#
+# The bot uses long polling (it does not need a public port or a webhook), so
+# it runs as a background worker. `TELEGRAM_BOT_TOKEN` is marked `sync: false`
+# so the value is entered in the Render dashboard and never committed.
+services:
+  - type: worker
+    name: duplicatorbot
+    runtime: python
+    plan: starter
+    region: frankfurt
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m duplicatorbot
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: MAX_OUTPUT_EDGE
+        value: "3000"
+      - key: CANVAS_BACKGROUND
+        value: FFFFFF

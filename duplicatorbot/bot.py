@@ -433,9 +433,35 @@ async def _text_fallback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     )
 
 
+def _install_event_loop() -> None:
+    """Guarantee a current event loop exists in the main thread.
+
+    python-telegram-bot's ``Application.run_polling`` calls
+    ``asyncio.get_event_loop()`` internally. Before Python 3.14 that call
+    created a loop on demand in the main thread, but since 3.14 it raises
+    ``RuntimeError: There is no current event loop``. Installing the loop
+    explicitly keeps long polling working on every supported Python version
+    (including the Python 3.14 runtime used by hosts such as Render).
+    """
+
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        pass
+    else:  # pragma: no cover - only hit if called from inside a running loop
+        return
+
+    try:
+        asyncio.get_event_loop_policy().get_event_loop()
+    except RuntimeError:
+        LOGGER.debug("Creating a new event loop for the main thread")
+        asyncio.set_event_loop(asyncio.new_event_loop())
+
+
 def run(settings: Settings) -> None:
     """Start long polling (blocking)."""
 
+    _install_event_loop()
     application = create_application(settings)
     LOGGER.info("DuplicatorBot %s starting", __version__)
     application.run_polling(
